@@ -1,0 +1,360 @@
+{
+  "capturedAt": "2026-01-15T00:00:00.000Z",
+  "gammaQuery": "/events?limit=200&closed=false&active=true",
+  "schemaVersion": 1,
+  "synthetic": true,
+  "markets": [
+    {
+      "id": "500107",
+      "conditionId": "0x500107a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Bitcoin close above $150,000 in 2026?",
+      "slug": "btc-150k-500107",
+      "yesPrice": 0.41,
+      "volumeUsd": 31200000,
+      "liquidityUsd": 2100000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0.06,
+      "tags": [
+        "Crypto"
+      ]
+    },
+    {
+      "id": "500104",
+      "conditionId": "0x500104a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will the Fed cut rates at the March 2026 meeting?",
+      "slug": "fed-march-500104",
+      "yesPrice": 0.62,
+      "volumeUsd": 22700000,
+      "liquidityUsd": 1500000,
+      "endDate": "2026-03-18T00:00:00Z",
+      "oneDayChange": 0.08,
+      "tags": [
+        "Economics",
+        "Fed"
+      ]
+    },
+    {
+      "id": "500100",
+      "conditionId": "0x500100a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Republicans hold the House in the 2026 midterms?",
+      "slug": "midterms-2026-500100",
+      "yesPrice": 0.44,
+      "volumeUsd": 18400000,
+      "liquidityUsd": 940000,
+      "endDate": "2026-11-04T00:00:00Z",
+      "oneDayChange": -0.02,
+      "tags": [
+        "Politics",
+        "Elections"
+      ]
+    },
+    {
+      "id": "500115",
+      "conditionId": "0x500115a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Russia and Ukraine sign a formal ceasefire in 2026?",
+      "slug": "ukraine-ceasefire-500115",
+      "yesPrice": 0.29,
+      "volumeUsd": 16800000,
+      "liquidityUsd": 1100000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0.07,
+      "tags": [
+        "Geopolitics"
+      ]
+    },
+    {
+      "id": "500101",
+      "conditionId": "0x500101a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Democrats win control of the Senate in 2026?",
+      "slug": "midterms-2026-500101",
+      "yesPrice": 0.51,
+      "volumeUsd": 14100000,
+      "liquidityUsd": 820000,
+      "endDate": "2026-11-04T00:00:00Z",
+      "oneDayChange": 0.03,
+      "tags": [
+        "Politics",
+        "Elections"
+      ]
+    },
+    {
+      "id": "500110",
+      "conditionId": "0x500110a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will OpenAI release GPT-6 before 2027?",
+      "slug": "gpt6-500110",
+      "yesPrice": 0.49,
+      "volumeUsd": 12600000,
+      "liquidityUsd": 780000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": -0.03,
+      "tags": [
+        "Tech",
+        "AI"
+      ]
+    },
+    {
+      "id": "500119",
+      "conditionId": "0x500119a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will the Kansas City Chiefs win Super Bowl LXI?",
+      "slug": "sb-lxi-500119",
+      "yesPrice": 0.18,
+      "volumeUsd": 11300000,
+      "liquidityUsd": 890000,
+      "endDate": "2027-02-07T00:00:00Z",
+      "oneDayChange": -0.02,
+      "tags": [
+        "Sports",
+        "NFL"
+      ]
+    },
+    {
+      "id": "500116",
+      "conditionId": "0x500116a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Israel and Iran engage in direct military strikes in 2026?",
+      "slug": "israel-iran-500116",
+      "yesPrice": 0.35,
+      "volumeUsd": 9400000,
+      "liquidityUsd": 640000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": -0.05,
+      "tags": [
+        "Geopolitics"
+      ]
+    },
+    {
+      "id": "500108",
+      "conditionId": "0x500108a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will the SEC approve a spot Solana ETF before July 2026?",
+      "slug": "sol-etf-500108",
+      "yesPrice": 0.57,
+      "volumeUsd": 8900000,
+      "liquidityUsd": 610000,
+      "endDate": "2026-07-01T00:00:00Z",
+      "oneDayChange": 0.11,
+      "tags": [
+        "Crypto",
+        "Regulation"
+      ]
+    },
+    {
+      "id": "500117",
+      "conditionId": "0x500117a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will China impose a naval blockade on Taiwan before 2027?",
+      "slug": "taiwan-500117",
+      "yesPrice": 0.09,
+      "volumeUsd": 7200000,
+      "liquidityUsd": 480000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0.01,
+      "tags": [
+        "Geopolitics"
+      ]
+    },
+    {
+      "id": "500105",
+      "conditionId": "0x500105a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Jerome Powell be replaced as Fed Chair before 2027?",
+      "slug": "powell-500105",
+      "yesPrice": 0.21,
+      "volumeUsd": 6800000,
+      "liquidityUsd": 420000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": -0.04,
+      "tags": [
+        "Economics",
+        "Fed"
+      ]
+    },
+    {
+      "id": "500120",
+      "conditionId": "0x500120a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Real Madrid win the 2026 Champions League?",
+      "slug": "ucl-2026-500120",
+      "yesPrice": 0.22,
+      "volumeUsd": 6100000,
+      "liquidityUsd": 430000,
+      "endDate": "2026-05-30T00:00:00Z",
+      "oneDayChange": 0.04,
+      "tags": [
+        "Sports",
+        "Soccer"
+      ]
+    },
+    {
+      "id": "500106",
+      "conditionId": "0x500106a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will US inflation exceed 4% in any month of 2026?",
+      "slug": "inflation-2026-500106",
+      "yesPrice": 0.38,
+      "volumeUsd": 5300000,
+      "liquidityUsd": 360000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0.02,
+      "tags": [
+        "Economics"
+      ]
+    },
+    {
+      "id": "500112",
+      "conditionId": "0x500112a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Sam Altman remain CEO of OpenAI through 2026?",
+      "slug": "altman-500112",
+      "yesPrice": 0.86,
+      "volumeUsd": 5100000,
+      "liquidityUsd": 330000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0,
+      "tags": [
+        "Tech",
+        "AI"
+      ]
+    },
+    {
+      "id": "500113",
+      "conditionId": "0x500113a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will SpaceX launch Starship to orbit with a payload in 2026?",
+      "slug": "starship-500113",
+      "yesPrice": 0.77,
+      "volumeUsd": 4500000,
+      "liquidityUsd": 290000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0.04,
+      "tags": [
+        "Space"
+      ]
+    },
+    {
+      "id": "500102",
+      "conditionId": "0x500102a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will a government shutdown begin before October 2026?",
+      "slug": "shutdown-2026-500102",
+      "yesPrice": 0.27,
+      "volumeUsd": 4200000,
+      "liquidityUsd": 310000,
+      "endDate": "2026-10-01T00:00:00Z",
+      "oneDayChange": 0.05,
+      "tags": [
+        "Politics"
+      ]
+    },
+    {
+      "id": "500111",
+      "conditionId": "0x500111a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will an AI system achieve gold on the International Math Olympiad in 2026?",
+      "slug": "imo-gold-500111",
+      "yesPrice": 0.72,
+      "volumeUsd": 3700000,
+      "liquidityUsd": 240000,
+      "endDate": "2026-07-31T00:00:00Z",
+      "oneDayChange": 0.09,
+      "tags": [
+        "Tech",
+        "AI"
+      ]
+    },
+    {
+      "id": "500118",
+      "conditionId": "0x500118a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Brent crude close above $110 per barrel in 2026?",
+      "slug": "brent-110-500118",
+      "yesPrice": 0.24,
+      "volumeUsd": 3100000,
+      "liquidityUsd": 210000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0.03,
+      "tags": [
+        "Commodities",
+        "Energy"
+      ]
+    },
+    {
+      "id": "500121",
+      "conditionId": "0x500121a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will Taylor Swift announce a new studio album in 2026?",
+      "slug": "swift-album-500121",
+      "yesPrice": 0.64,
+      "volumeUsd": 2800000,
+      "liquidityUsd": 160000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0.05,
+      "tags": [
+        "Culture",
+        "Music"
+      ]
+    },
+    {
+      "id": "500109",
+      "conditionId": "0x500109a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will a top-5 US bank announce crypto custody services in 2026?",
+      "slug": "bank-custody-500109",
+      "yesPrice": 0.68,
+      "volumeUsd": 2400000,
+      "liquidityUsd": 180000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": 0.01,
+      "tags": [
+        "Crypto"
+      ]
+    },
+    {
+      "id": "500123",
+      "conditionId": "0x500123a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will global average temperature in 2026 set a new record?",
+      "slug": "temp-record-500123",
+      "yesPrice": 0.58,
+      "volumeUsd": 2100000,
+      "liquidityUsd": 130000,
+      "endDate": "2027-01-15T00:00:00Z",
+      "oneDayChange": 0.02,
+      "tags": [
+        "Climate",
+        "Science"
+      ]
+    },
+    {
+      "id": "500103",
+      "conditionId": "0x500103a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will the Supreme Court overturn Chevron deference precedent further in 2026?",
+      "slug": "scotus-2026-500103",
+      "yesPrice": 0.33,
+      "volumeUsd": 1900000,
+      "liquidityUsd": 140000,
+      "endDate": "2026-06-30T00:00:00Z",
+      "oneDayChange": -0.01,
+      "tags": [
+        "Politics",
+        "Law"
+      ]
+    },
+    {
+      "id": "500114",
+      "conditionId": "0x500114a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will a major AI lab publicly pause frontier training in 2026?",
+      "slug": "ai-pause-500114",
+      "yesPrice": 0.13,
+      "volumeUsd": 1600000,
+      "liquidityUsd": 95000,
+      "endDate": "2026-12-31T00:00:00Z",
+      "oneDayChange": -0.02,
+      "tags": [
+        "Tech",
+        "AI"
+      ]
+    },
+    {
+      "id": "500122",
+      "conditionId": "0x500122a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9a3f9",
+      "question": "Will a film with a majority-AI-generated script be nominated for an Oscar by 2027?",
+      "slug": "ai-oscar-500122",
+      "yesPrice": 0.11,
+      "volumeUsd": 1200000,
+      "liquidityUsd": 78000,
+      "endDate": "2027-01-31T00:00:00Z",
+      "oneDayChange": -0.01,
+      "tags": [
+        "Culture",
+        "Film"
+      ]
+    }
+  ]
+}
