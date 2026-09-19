@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useCity, useScore } from "./store";
 import { DISTRICT_META } from "@/lib/city/mapping";
 import { FAULT_LABELS } from "@/lib/game/tectonics";
-import { scenarioPnL } from "@/lib/game/portfolio";
+import { scenarioPnL, positionValue } from "@/lib/game/portfolio";
+import { MarketList } from "./MarketList";
 
 const PRESETS = [
   "The Fed cuts rates by 50 basis points",
@@ -31,15 +32,30 @@ const label: React.CSSProperties = {
 export function Hud({ live }: { live: boolean }) {
   const {
     markets, judgments, buildings, cash, positions, selectedId,
-    survey, shock, busy, error,
-    buy, select, clearPositions, setSurvey, setShock, setBusy, setError,
+    survey, shock, busy, error, priceProvenance, openingNetWorth,
+    buy, sellAll, select, clearPositions, setSurvey, setShock, setBusy, setError,
   } = useCity();
   const score = useScore();
   const [shockText, setShockText] = useState(PRESETS[0]);
 
+  // Realised + unrealised, against where the session started.
+  const sessionPnL = score.netWorth - openingNetWorth;
+
   const selected = markets.find((m) => m.id === selectedId);
   const selectedJ = selectedId ? judgments[selectedId] : undefined;
   const selectedB = buildings.find((b) => b.id === selectedId);
+  const selectedDelta = selectedId ? (useCity.getState().priceDeltas[selectedId] ?? 0) : 0;
+
+  const heldPositions = selected
+    ? positions.filter((p) => p.marketId === selected.id)
+    : [];
+  const heldHere = heldPositions.length > 0;
+  const heldPnL = selected
+    ? heldPositions.reduce(
+        (sum, p) => sum + positionValue(p, selected) - Math.abs(p.stake),
+        0,
+      )
+    : 0;
 
   const impacts = new Map((shock?.effects ?? []).map((e) => [e.marketId, e.impact]));
   const pnl = shock ? scenarioPnL({ cash, positions }, markets, impacts) : 0;
@@ -92,44 +108,79 @@ export function Hud({ live }: { live: boolean }) {
 
   return (
     <>
-      {/* ── Title + treasury ─────────────────────────────────────────── */}
-      <div style={{ position: "absolute", top: 16, left: 16, ...panel, width: 268 }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-          <h1 style={{ margin: 0, fontSize: 19, letterSpacing: "-0.01em" }}>Oddsville</h1>
-          <span style={{ ...label, fontSize: 9 }}>{live ? "live" : "fixture"}</span>
-        </div>
-        <p style={{ margin: "5px 0 12px", fontSize: 11.5, color: "var(--muted)", lineHeight: 1.5 }}>
-          Every building is a prediction market. Jev zoned the city by reading
-          the questions.
-        </p>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          <Stat title="Treasury" value={`$${Math.round(cash).toLocaleString()}`} />
-          <Stat title="Net worth" value={`$${Math.round(score.netWorth).toLocaleString()}`} />
-        </div>
-
-        <div style={{ marginTop: 12 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", ...label }}>
-            <span>Structural integrity</span>
-            <span style={{ color: integrityColor, fontVariantNumeric: "tabular-nums" }}>
-              {(score.integrity * 100).toFixed(0)}%
-            </span>
+      {/* ── Left column: scoreboard over the market index ────────────── */}
+      <div
+        style={{
+          position: "absolute",
+          top: 16,
+          left: 16,
+          bottom: 16,
+          width: 300,
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
+        <div style={{ ...panel, flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <h1 style={{ margin: 0, fontSize: 19, letterSpacing: "-0.01em" }}>Oddsville</h1>
+            <span style={{ ...label, fontSize: 9 }}>{live ? "live" : "fixture"}</span>
+            {priceProvenance && (
+              <span
+                style={{
+                  ...label,
+                  fontSize: 9,
+                  marginLeft: "auto",
+                  color: priceProvenance === "live" ? "var(--good)" : "var(--gold)",
+                }}
+              >
+                ● {priceProvenance === "live" ? "live odds" : "sim odds"}
+              </span>
+            )}
           </div>
-          <div style={{ height: 5, background: "rgba(255,255,255,0.07)", borderRadius: 3, marginTop: 5 }}>
-            <div
-              style={{
-                height: "100%",
-                width: `${score.integrity * 100}%`,
-                background: integrityColor,
-                borderRadius: 3,
-                transition: "width 260ms ease, background 260ms ease",
-              }}
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 10,
+              marginTop: 11,
+            }}
+          >
+            <Stat title="Cash" value={`$${Math.round(cash).toLocaleString()}`} />
+            <Stat title="Net worth" value={`$${Math.round(score.netWorth).toLocaleString()}`} />
+            <Stat
+              title="Session P&L"
+              value={`${sessionPnL >= 0 ? "+" : "−"}$${Math.abs(Math.round(sessionPnL)).toLocaleString()}`}
+              tone={Math.abs(sessionPnL) < 1 ? undefined : sessionPnL > 0 ? "good" : "bad"}
             />
           </div>
-          <div style={{ ...label, marginTop: 7, fontSize: 9.5, lineHeight: 1.5 }}>
-            Score {score.score.toLocaleString()} · {score.exposureCount} holdings
+
+          <div style={{ marginTop: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", ...label }}>
+              <span>Structural integrity</span>
+              <span style={{ color: integrityColor, fontVariantNumeric: "tabular-nums" }}>
+                {(score.integrity * 100).toFixed(0)}%
+              </span>
+            </div>
+            <div style={{ height: 5, background: "rgba(255,255,255,0.07)", borderRadius: 3, marginTop: 5 }}>
+              <div
+                style={{
+                  height: "100%",
+                  width: `${score.integrity * 100}%`,
+                  background: integrityColor,
+                  borderRadius: 3,
+                  transition: "width 260ms ease, background 260ms ease",
+                }}
+              />
+            </div>
+            <div style={{ ...label, marginTop: 7, fontSize: 9.5, lineHeight: 1.5 }}>
+              Score {score.score.toLocaleString()} · {score.exposureCount} holdings
+            </div>
           </div>
         </div>
+
+        <MarketList />
       </div>
 
       {/* ── The two Jev actions ──────────────────────────────────────── */}
@@ -224,9 +275,18 @@ export function Hud({ live }: { live: boolean }) {
         )}
       </div>
 
-      {/* ── Selected building ────────────────────────────────────────── */}
+      {/* ── Selected building — bottom centre, clear of the list ─────── */}
       {selected && selectedJ && selectedB && (
-        <div style={{ position: "absolute", bottom: 16, left: 16, ...panel, width: 360 }}>
+        <div
+          style={{
+            position: "absolute",
+            bottom: 16,
+            left: "50%",
+            transform: "translateX(-50%)",
+            ...panel,
+            width: 430,
+          }}
+        >
           <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
             <div style={{ ...label, color: DISTRICT_META[selectedJ.district].color }}>
               {DISTRICT_META[selectedJ.district].label} · {selectedJ.archetype}
@@ -240,10 +300,29 @@ export function Hud({ live }: { live: boolean }) {
             {selected.question}
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 9 }}>
-            <Stat title="Yes" value={`${(selected.yesPrice * 100).toFixed(0)}%`} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 9 }}>
+            <Stat
+              title="Yes"
+              value={`${(selected.yesPrice * 100).toFixed(0)}%`}
+              tone={
+                Math.abs(selectedDelta) < 1e-6
+                  ? undefined
+                  : selectedDelta > 0
+                    ? "good"
+                    : "bad"
+              }
+            />
             <Stat title="Volume" value={`$${(selected.volumeUsd / 1e6).toFixed(1)}M`} />
             <Stat title="Fault" value={FAULT_LABELS[selectedB.faultLine]} small />
+            <Stat
+              title="Your P&L"
+              value={
+                heldHere
+                  ? `${heldPnL >= 0 ? "+" : "−"}$${Math.abs(Math.round(heldPnL)).toLocaleString()}`
+                  : "—"
+              }
+              tone={!heldHere || Math.abs(heldPnL) < 1 ? undefined : heldPnL > 0 ? "good" : "bad"}
+            />
           </div>
 
           <div style={{ ...label, marginTop: 10, fontSize: 9.5 }}>
@@ -252,7 +331,8 @@ export function Hud({ live }: { live: boolean }) {
             {(selectedJ.districtConfidence * 100).toFixed(0)}%
           </div>
 
-          <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+          <div style={{ display: "flex", gap: 6, marginTop: 10, alignItems: "center" }}>
+            <span style={{ ...label, fontSize: 9, color: "var(--gold)" }}>YES</span>
             {[250, 500, 1000].map((amt) => (
               <button
                 key={amt}
@@ -260,7 +340,7 @@ export function Hud({ live }: { live: boolean }) {
                 disabled={amt > cash}
                 style={{ ...primaryBtn, flex: 1, opacity: amt > cash ? 0.4 : 1 }}
               >
-                YES ${amt}
+                ${amt}
               </button>
             ))}
             <button
@@ -270,6 +350,14 @@ export function Hud({ live }: { live: boolean }) {
             >
               NO $500
             </button>
+            {heldHere && (
+              <button
+                onClick={() => sellAll(selected.id)}
+                style={{ ...ghostBtn, flex: 1, borderColor: "rgba(244,84,79,0.5)", color: "var(--bad)" }}
+              >
+                Close
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -298,7 +386,17 @@ export function Hud({ live }: { live: boolean }) {
   );
 }
 
-function Stat({ title, value, small }: { title: string; value: string; small?: boolean }) {
+function Stat({
+  title,
+  value,
+  small,
+  tone,
+}: {
+  title: string;
+  value: string;
+  small?: boolean;
+  tone?: "good" | "bad";
+}) {
   return (
     <div>
       <div style={label}>{title}</div>
@@ -308,6 +406,8 @@ function Stat({ title, value, small }: { title: string; value: string; small?: b
           marginTop: 3,
           fontVariantNumeric: "tabular-nums",
           lineHeight: 1.25,
+          color: tone === "good" ? "var(--good)" : tone === "bad" ? "var(--bad)" : undefined,
+          transition: "color 200ms ease",
         }}
       >
         {value}
@@ -351,8 +451,9 @@ const primaryBtn: React.CSSProperties = {
   border: "1px solid rgba(255, 210, 125, 0.45)",
   color: "var(--gold)",
   borderRadius: 7,
-  padding: "7px 9px",
-  fontSize: 11.5,
+  padding: "7px 6px",
+  fontSize: 11,
+  whiteSpace: "nowrap",
 };
 
 const ghostBtn: React.CSSProperties = {
@@ -361,6 +462,7 @@ const ghostBtn: React.CSSProperties = {
   border: "1px solid var(--edge)",
   color: "var(--ink)",
   borderRadius: 7,
-  padding: "7px 9px",
-  fontSize: 11.5,
+  padding: "7px 6px",
+  fontSize: 11,
+  whiteSpace: "nowrap",
 };

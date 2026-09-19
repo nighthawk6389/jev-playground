@@ -84,6 +84,14 @@ export default function Scene({ buildings, lowFx }: SceneProps) {
   const positions = useCity((s) => s.positions);
   const selectedId = useCity((s) => s.selectedId);
   const select = useCity((s) => s.select);
+  const markets = useCity((s) => s.markets);
+
+  // Geometry stays baked (heights must not jump every tick), but the GLOW
+  // tracks the live price, so the skyline visibly breathes as odds move.
+  const livePrice = useMemo(
+    () => new Map(markets.map((m) => [m.id, m.yesPrice])),
+    [markets],
+  );
 
   const impacts = useMemo(() => {
     const m = new Map<string, { impact: number; confidence: number }>();
@@ -142,10 +150,12 @@ export default function Scene({ buildings, lowFx }: SceneProps) {
           <BuildingMesh
             key={b.id}
             building={b}
+            yesPrice={livePrice.get(b.id) ?? b.yesPrice}
             impact={fx?.impact ?? 0}
             confidence={fx?.confidence ?? 1}
             held={held.has(b.id)}
             dimmed={!!selectedId && selectedId !== b.id}
+            selected={selectedId === b.id}
           />
         );
       })}

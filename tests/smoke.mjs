@@ -164,6 +164,56 @@ check("survey found shared bedrock among Fed holdings",
   (survey.body.links ?? []).some((l) => l.shared > 0.5),
   JSON.stringify(survey.body.links ?? []).slice(0, 160));
 
+/* ── The live price ticker actually moves the economy ─────────────────── */
+const t0 = await page.evaluate(() => {
+  const s = window.__zustandCity.getState();
+  return { prices: s.markets.map((m) => m.yesPrice), nw: window.__netWorth };
+});
+// Two ticks at 6s apiece, plus slack.
+await page.waitForTimeout(14_000);
+const t1 = await page.evaluate(() => {
+  const s = window.__zustandCity.getState();
+  return {
+    prices: s.markets.map((m) => m.yesPrice),
+    nw: window.__netWorth,
+    provenance: s.priceProvenance,
+    lastTick: s.lastTick,
+  };
+});
+
+check("price ticker delivered a tick", t1.lastTick !== null);
+check("ticker labelled its provenance", ["live", "simulated"].includes(t1.provenance),
+  `got ${t1.provenance}`);
+const moved = t0.prices.filter((p, i) => p !== t1.prices[i]).length;
+check("PRICES ACTUALLY MOVED", moved > 0, `${moved} of ${t0.prices.length} changed`);
+check("NET WORTH MOVED WITH THEM — the economy is live",
+  Math.abs(t1.nw - t0.nw) > 0.01, `${t0.nw} -> ${t1.nw}`);
+
+/* ── The market list, and list->building selection ────────────────────── */
+const listCount = await page.locator('[data-market-row]').count();
+check("market list renders a row per market", listCount === 24, `got ${listCount}`);
+
+await page.fill('[data-market-search]', "powell");
+await page.waitForTimeout(300);
+const filtered = await page.locator('[data-market-row]').count();
+check("search filters the list", filtered >= 1 && filtered < 24, `got ${filtered}`);
+
+await page.locator('[data-market-row]').first().click();
+await page.waitForTimeout(400);
+const selectedFromList = await page.evaluate(
+  () => window.__zustandCity.getState().selectedId,
+);
+check("clicking a list row selects that market", !!selectedFromList);
+
+const beaconed = await page.evaluate((id) => {
+  // The selected building gets a beacon; assert the scene agrees with the list.
+  return window.__zustandCity.getState().selectedId === id;
+}, selectedFromList);
+check("scene and list share one selection", beaconed);
+
+await page.fill('[data-market-search]', "");
+await page.waitForTimeout(300);
+
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 3).join(" | "));
 
 /* ── Screenshots, with effects ON so we can judge the look ────────────── */
@@ -171,6 +221,17 @@ await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.__oddsville?.ready === true, { timeout: 90_000 });
 await new Promise((r) => setTimeout(r, 14_000));
 await page.screenshot({ path: "tests/out/city.png" });
+
+// Select from the LIST and capture, so the beacon + detail panel are visible.
+await page.evaluate(() => {
+  const s = window.__zustandCity.getState();
+  const tall = [...s.buildings].sort((a, b) => b.height - a.height)[0];
+  s.select(tall.id);
+  s.buy(tall.id, 1000);
+});
+await new Promise((r) => setTimeout(r, 6000));
+await page.screenshot({ path: "tests/out/selected.png" });
+await page.evaluate(() => window.__zustandCity.getState().select(null));
 
 // And a quake, mid-shake.
 await page.evaluate(async () => {

@@ -6,6 +6,7 @@ import { Building } from "@/lib/city/mapping";
 import { Judgment, Market } from "@/lib/ports";
 import { useCity } from "./store";
 import { structuralIntegrity } from "@/lib/game/tectonics";
+import { netWorth } from "@/lib/game/portfolio";
 import { Hud } from "./Hud";
 
 /**
@@ -14,6 +15,10 @@ import { Hud } from "./Hud";
  * Next 16 rejects `ssr: false` inside a Server Component outright, and the
  * Canvas must never SSR — three touches the DOM at import time.
  */
+/** Poll interval. Fast enough that the city feels alive, slow enough to stay
+ *  well inside Polymarket's (undocumented, conservatively assumed) rate limit. */
+const TICK_MS = 6000;
+
 const Scene = dynamic(() => import("./Scene"), {
   ssr: false,
   loading: () => (
@@ -52,6 +57,44 @@ export default function CityClient({ markets, judgments, buildings, live }: Prop
   }, [markets, judgments, buildings]);
 
   /**
+   * The price clock. This is what makes the economy real: odds move on their
+   * own, so open positions gain and lose against their entry price without the
+   * player doing anything.
+   *
+   * Paused while the tab is hidden — no point burning Polymarket rate limit or
+   * Vercel invocations on a city nobody is looking at.
+   */
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("ticker") === "0") return;
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const tick = async () => {
+      if (!cancelled && document.visibilityState === "visible") {
+        try {
+          const res = await fetch("/api/prices", { cache: "no-store" });
+          if (res.ok) {
+            const data = await res.json();
+            if (!cancelled && data.prices) {
+              useCity.getState().applyPrices(data.prices, data.provenance);
+            }
+          }
+        } catch {
+          // A dropped tick is not worth surfacing; the next one will land.
+        }
+      }
+      if (!cancelled) timer = setTimeout(tick, TICK_MS);
+    };
+
+    timer = setTimeout(tick, 1200);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, []);
+
+  /**
    * Debug snapshot for tests. Asserting on this tests the data->geometry
    * mapping, which is the actual product logic, rather than pixels.
    */
@@ -63,6 +106,7 @@ export default function CityClient({ markets, judgments, buildings, live }: Prop
     const unsub = useCity.subscribe((s) => {
       const w = window as unknown as Record<string, unknown>;
       w.__integrity = structuralIntegrity(s.positions, s.judgments);
+      w.__netWorth = netWorth({ cash: s.cash, positions: s.positions }, s.markets);
       w.__oddsville = {
         ready: true,
         live,

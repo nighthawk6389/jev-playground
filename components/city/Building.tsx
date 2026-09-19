@@ -62,16 +62,29 @@ function glowFor(yesPrice: number): number {
 
 interface Props {
   building: Building;
+  /** Live P(yes) — moves as prices tick, unlike the baked geometry. */
+  yesPrice: number;
   /** -1..1 signed shock impact, or 0 when no scenario is running. */
   impact: number;
   /** Jev's confidence in that impact. Low -> shimmer instead of commit. */
   confidence: number;
   held: boolean;
   dimmed: boolean;
+  /** Clicked, here or in the market list. Gets a beacon so it's findable. */
+  selected: boolean;
 }
 
-export function BuildingMesh({ building: b, impact, confidence, held, dimmed }: Props) {
+export function BuildingMesh({
+  building: b,
+  yesPrice,
+  impact,
+  confidence,
+  held,
+  dimmed,
+  selected,
+}: Props) {
   const group = useRef<THREE.Group>(null);
+  const beacon = useRef<THREE.Mesh>(null);
   const select = useCity((s) => s.select);
   const hover = useCity((s) => s.hover);
 
@@ -102,8 +115,16 @@ export function BuildingMesh({ building: b, impact, confidence, held, dimmed }: 
 
   // Per-frame animation goes through refs, never React state.
   useFrame((state) => {
-    if (!group.current) return;
     const t = state.clock.elapsedTime;
+
+    // Selection beacon: a slow bob + spin above the chosen building, so a click
+    // in the market list is findable in the skyline at a glance.
+    if (beacon.current) {
+      beacon.current.position.y = b.height + 1.5 + Math.sin(t * 2) * 0.16;
+      beacon.current.rotation.y = t * 1.4;
+    }
+
+    if (!group.current) return;
     const energy = useCity.getState().quakeEnergy;
     const magnitude = Math.abs(impact) * energy;
 
@@ -130,7 +151,9 @@ export function BuildingMesh({ building: b, impact, confidence, held, dimmed }: 
         : "#f4544f"
       : districtColor;
 
-  const intensity = glowFor(b.yesPrice) * (dimmed ? 0.18 : 1) * (held ? 1.35 : 1);
+  // Live price, not the baked one — this is what makes the city react to ticks.
+  const intensity =
+    glowFor(yesPrice) * (dimmed ? 0.18 : 1) * (held ? 1.35 : 1) * (selected ? 1.5 : 1);
 
   return (
     <group
@@ -180,6 +203,20 @@ export function BuildingMesh({ building: b, impact, confidence, held, dimmed }: 
           <ringGeometry args={[b.width * 0.75, b.width * 0.95, 24]} />
           <meshBasicMaterial color="#ffd27d" transparent opacity={0.85} />
         </mesh>
+      )}
+
+      {/* Selection beacon — the visual answer to "which one did I just click?" */}
+      {selected && (
+        <>
+          <mesh ref={beacon} position={[0, b.height + 1.5, 0]}>
+            <octahedronGeometry args={[0.38, 0]} />
+            <meshBasicMaterial color="#ffd27d" />
+          </mesh>
+          <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[b.width * 1.05, b.width * 1.3, 28]} />
+            <meshBasicMaterial color="#ffd27d" transparent opacity={0.6} />
+          </mesh>
+        </>
       )}
     </group>
   );

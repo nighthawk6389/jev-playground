@@ -72,6 +72,39 @@ shudder harder, shared seams light up.
 directly onto signed quake magnitude. Low confidence shimmers instead of
 committing — a `noul` near 0.5 means genuinely undecided, not "medium".
 
+## How to play
+
+**Controls:** drag to orbit, scroll to zoom. Click a building — or a row in the
+market list — to select it. The two stay in sync: clicking a building scrolls its
+row into view, clicking a row drops a gold beacon on the building.
+
+1. **Read the city.** Height = volume. Glow = P(yes). Colour = district, which
+   Jev assigned by reading the question. Spires mark landmarks.
+2. **Scan the list.** Every market, searchable by question, district or fault
+   line, sortable by volume / price / biggest mover. Live ▲▼ deltas per row.
+3. **Take positions.** `YES $250/$500/$1000` or `NO $500`. Held buildings get a
+   gold plinth. `Close` sells at the current price and realises the P&L.
+4. **Watch integrity.** It falls as your holdings pile onto one fault line. Even
+   a single holding only scores ~67% — one market is not a portfolio.
+5. **Survey the bedrock** (needs ≥2 positions). Glowing seams appear between
+   holdings that share a driver. Red = concentration risk, green = hedge.
+6. **Stress test.** Preset or free text. The city quakes, green for rises, red
+   for falls, and you see the scenario P&L before it happens.
+
+**Prices move on their own.** A ticker polls every 6 seconds, so open positions
+gain and lose without you doing anything — net worth and session P&L are live.
+Live mode re-fetches Polymarket; offline it's a deterministic mean-reverting
+drift, labelled **sim odds** in the corner so it's never mistaken for real.
+
+```
+score = netWorth × (0.5 + 0.5 × integrity)
+```
+
+A fragile city is worth less than a resilient one of the same value. Both halves
+are live: net worth moves with the market, integrity moves with your choices.
+
+`?ticker=0` freezes prices, `?fx=0` drops shadows and postprocessing.
+
 ## Running it
 
 ### Zero-config (default)
@@ -123,16 +156,16 @@ question definitions and parsing run in both modes.
 ## Tests
 
 ```bash
-npm test      # 35 unit tests: normalizer, tectonics, mapping, scoring
+npm test      # 50 unit tests: normalizer, tectonics, mapping, scoring, drift, P&L
 npm run build && npm start &
-npm run smoke # 17 end-to-end checks against a real WebGL render
+npm run smoke # 25 end-to-end checks against a real WebGL render
 ```
 
 The smoke test asserts the **data→geometry mapping** through a `window.__oddsville`
 snapshot — that the highest-volume market really is the tallest building, that
-concentrating a portfolio really does drop integrity — plus a canvas
-non-blankness check, which is what catches shader failures that DOM assertions
-miss entirely.
+concentrating a portfolio really does drop integrity, that prices actually move
+across two ticks and **net worth moves with them** — plus a canvas non-blankness
+check, which is what catches shader failures that DOM assertions miss entirely.
 
 ## Notes on the build
 
